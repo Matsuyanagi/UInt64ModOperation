@@ -1,13 +1,13 @@
 #include "uint64_mod_operation.h"
 
 /**
- * uadd64( uint64_t a, uint64_t b, uint64_t mod )
+ * uaddmod64( uint64_t a, uint64_t b, uint64_t mod )
  * @param a
  * @param b
  * @param mod modular
  * @return ( a + b ) % mod
  */
-uint64_t uadd64( uint64_t a, uint64_t b, uint64_t mod ) {
+uint64_t uaddmod64( uint64_t a, uint64_t b, uint64_t mod ) {
 	uint64_t ans;
 	if ( a > std::numeric_limits<uint64_t>::max() - b ) {
 		// overflow
@@ -23,16 +23,19 @@ uint64_t uadd64( uint64_t a, uint64_t b, uint64_t mod ) {
 }
 
 /**
- * uint64_t usub64( uint64_t a, uint64_t b, uint64_t mod )
+ * uint64_t usubmod64( uint64_t a, uint64_t b, uint64_t mod )
  * @param a
  * @param b
  * @param mod modular
  * @return ( a - b ) % mod
  */
-uint64_t usub64( uint64_t a, uint64_t b, uint64_t mod ) {
+uint64_t usubmod64( uint64_t a, uint64_t b, uint64_t mod ) {
 	uint64_t ans;
 	if ( a < b ) {
-		ans = mod - ( b - a ) % mod;
+		ans = ( b - a ) % mod;
+		if ( ans != 0 ){
+			ans = mod - ans;
+		}
 	} else {
 		ans = ( a - b ) % mod;
 	}
@@ -103,7 +106,7 @@ uint64_t extended_eucledian( uint64_t a, uint64_t b, uint64_t mod, uint64_t *ox,
 	// *x1 = y - ( b / a ) * x;
 	uint64_t q = b / a;
 	q = mulmod64( q, x, mod );
-	*ox = usub64( y, q, mod );
+	*ox = usubmod64( y, q, mod );
 
 	*oy = x;
 	return gcd;

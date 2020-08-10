@@ -22,7 +22,7 @@ int main() {
 	printf( "ans : %llx\n", ans );
 	printf( "----\n" );
 
-	ans = uadd64( a, b, c );
+	ans = uaddmod64( a, b, c );
 
 	printf( "ans : %llx\n", ans );
 	printf( "----\n" );
@@ -43,7 +43,7 @@ int main() {
 	printf( "a+b : %llx\n", a + b );
 	printf( "ans : %llx\n", ans );
 
-	ans = usub64( a, b, c );
+	ans = usubmod64( a, b, c );
 	printf( "ans : %llx\n", ans );
 
 	printf( "----\n" );

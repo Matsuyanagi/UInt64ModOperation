@@ -1,0 +1,15 @@
+---
+BasedOnStyle:           Google
+IndentWidth:            4
+SpacesInParentheses:    true
+SpacesInSquareBrackets: true
+TabWidth:               4
+UseTab:                 ForIndentation
+---
+Language:               Cpp
+ColumnLimit:            130
+
+IncludeCategories:
+  - Regex:              '^"(pch\.h|stdafx\.h)'
+    Priority:           0
+    SortPriority:       0
