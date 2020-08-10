@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30330.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UInt64ModOperation", "UInt64ModOperation\UInt64ModOperation.vcxproj", "{CEC3C593-1D73-418C-A5FE-0014272DC15A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEC3C593-1D73-418C-A5FE-0014272DC15A}.Debug|x64.ActiveCfg = Debug|x64
+		{CEC3C593-1D73-418C-A5FE-0014272DC15A}.Debug|x64.Build.0 = Debug|x64
+		{CEC3C593-1D73-418C-A5FE-0014272DC15A}.Release|x64.ActiveCfg = Release|x64
+		{CEC3C593-1D73-418C-A5FE-0014272DC15A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9DF4C0F1-5A33-4D4F-849E-224C801CCCF6}
+	EndGlobalSection
+EndGlobal
