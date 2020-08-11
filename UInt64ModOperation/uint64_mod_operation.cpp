@@ -98,15 +98,20 @@ uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
  * @return ( a ** e ) % mod
  */
 uint64_t powmod64( uint64_t a, uint64_t e, const uint64_t mod ) {
-	if ( e == 0 ) {
-		return 1;
+	if ( a >= mod ){
+		a %= mod;
 	}
-	a %= mod;
 	if ( a == 1 ) {
 		return 1;
 	}
-	uint64_t te = e % mod;
-	if ( a == mod - 1 ) {
+	uint64_t te = e;
+	if ( te >= mod ){
+		te = te % mod;
+	}
+	if ( te == 0 ) {
+		return 1;
+	}
+	if ( a == mod - 1 ) {  // a ≡ -1 % mod
 		return ( te & 1 ) ? mod - 1 : 1;
 	}
 
@@ -151,7 +156,7 @@ uint64_t extended_eucledian( uint64_t a, uint64_t b, uint64_t mod, uint64_t *ox,
  */
 uint64_t umodinv64( uint64_t a, uint64_t mod ) {
 	uint64_t x, y;
-	if ( a > mod ) {
+	if ( a >= mod ) {
 		a %= mod;
 	}
 	uint64_t gcd = extended_eucledian( a, mod, mod, &x, &y );
