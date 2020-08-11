@@ -9,7 +9,7 @@
  */
 uint64_t uaddmod64( uint64_t a, uint64_t b, uint64_t mod ) {
 	uint64_t ans;
-	if ( a > std::numeric_limits<uint64_t>::max() - b ) {
+	if ( is_add_overflow( a, b ) ) {
 		// a + b : overflow
 		ans = std::numeric_limits<uint64_t>::max() % mod;
 		ans += ( a - ( std::numeric_limits<uint64_t>::max() - b ) ) % mod;
@@ -67,6 +67,17 @@ uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
 		return 0;
 	}
 
+	//	_umul128(), _udiv128() can be used.
+	// The conditions for using _umul128() and _udiv128() are bitlen( a * b ) - bitlen( mod ) < sizeof( uint64_t ).
+	// The quotient does not overflow.
+	if ( static_cast<int>( sizeof( uint64_t ) ) * 8 - __lzcnt64( a ) - __lzcnt64( b ) + __lzcnt64( mod ) <
+	     static_cast<int>( sizeof( uint64_t ) * 8 ) ) {
+		uint64_t hi = 0, rem = 0;
+		const uint64_t lo = _umul128( a, b, &hi );
+		_udiv128( hi, lo, mod, &rem );
+		return rem;
+	}
+
 	// a => b を保証する
 	if ( a < b ) {
 		uint64_t t = a;
@@ -78,13 +89,30 @@ uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
 	uint64_t x = a;
 	while ( b ) {
 		if ( b & 1 ) {
-			ans = uaddmod64( ans, x, mod );
+			if ( is_add_overflow( ans, x ) ) {
+				ans = uaddmod64( ans, x, mod );
+			} else {
+				// ans < mod , x < mod : ans + x < 2 * mod
+				ans += x;
+				if ( ans > mod ) {
+					ans -= mod;
+				}
+			}
 		}
 		b >>= 1;
 		if ( b == 0 ) {
 			break;
 		}
-		x = uaddmod64( x, x, mod );
+
+		if ( is_add_overflow( x, x ) ) {
+			x = uaddmod64( x, x, mod );
+		} else {
+			// x < mod : x + x < 2 * mod
+			x += x;
+			if ( x > mod ) {
+				x -= mod;
+			}
+		}
 	}
 
 	return ans;
@@ -98,14 +126,14 @@ uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
  * @return ( a ** e ) % mod
  */
 uint64_t powmod64( uint64_t a, uint64_t e, const uint64_t mod ) {
-	if ( a >= mod ){
+	if ( a >= mod ) {
 		a %= mod;
 	}
 	if ( a == 1 ) {
 		return 1;
 	}
 	uint64_t te = e;
-	if ( te >= mod ){
+	if ( te >= mod ) {
 		te = te % mod;
 	}
 	if ( te == 0 ) {
