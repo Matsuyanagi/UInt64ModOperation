@@ -1,7 +1,8 @@
-#include <iostream>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -54,10 +55,10 @@ int main() {
 	p = 41;
 
 	std::vector<uint64_t> prime_numbers{
-		23,
-		41,
-		43,
-		47,
+	    23,
+	    41,
+	    43,
+	    47,
 	};
 
 	for ( auto &&prime : prime_numbers ) {
