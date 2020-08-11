@@ -50,7 +50,6 @@ uint64_t usubmod64( uint64_t a, uint64_t b, uint64_t mod ) {
  * @return ( a * b ) % mod
  */
 uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
-	uint64_t hi, rem = 0;
 	if ( mod == 0 ) {
 		throw std::overflow_error( "Divide by Zero." );
 	}
@@ -78,7 +77,7 @@ uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
 		return rem;
 	}
 
-	// a => b を保証する
+	// Ensure that a >= b.
 	if ( a < b ) {
 		uint64_t t = a;
 		a = b;
@@ -119,7 +118,7 @@ uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
 }
 
 /**
- * uint64_t powmod64( const uint64_t a, const uint64_t e, const uint64_t mod )
+ * uint64_t powmod64( uint64_t a, uint64_t e, const uint64_t mod )
  * @param a base
  * @param e exponent
  * @param mod modular
@@ -201,7 +200,7 @@ uint64_t umodinv64( uint64_t a, uint64_t mod ) {
  *  @param a Dividend
  *  @param b divisor
  *  @param mod modular
- *  @return a / b mod
+ *  @return ( a / b ) % mod
  */
 uint64_t udivmod64( const uint64_t a, const uint64_t b, const uint64_t mod ) {
 	if ( b == 0 ) {
