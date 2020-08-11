@@ -10,7 +10,7 @@
 uint64_t uaddmod64( uint64_t a, uint64_t b, uint64_t mod ) {
 	uint64_t ans;
 	if ( a > std::numeric_limits<uint64_t>::max() - b ) {
-		// overflow
+		// a + b : overflow
 		ans = std::numeric_limits<uint64_t>::max() % mod;
 		ans += ( a - ( std::numeric_limits<uint64_t>::max() - b ) ) % mod;
 		if ( ans >= mod ) {
@@ -33,7 +33,7 @@ uint64_t usubmod64( uint64_t a, uint64_t b, uint64_t mod ) {
 	uint64_t ans;
 	if ( a < b ) {
 		ans = ( b - a ) % mod;
-		if ( ans != 0 ){
+		if ( ans != 0 ) {
 			ans = mod - ans;
 		}
 	} else {
@@ -43,20 +43,51 @@ uint64_t usubmod64( uint64_t a, uint64_t b, uint64_t mod ) {
 }
 
 /**
- * uint64_t mulmod64( const uint64_t a, const uint64_t b, const uint64_t mod )
+ * uint64_t umulmod64( const uint64_t a, const uint64_t b, const uint64_t mod )
  * @param a
  * @param b
  * @param mod modular
  * @return ( a * b ) % mod
  */
-uint64_t mulmod64( const uint64_t a, const uint64_t b, const uint64_t mod ) {
-	uint64_t hi, rem;
-	if ( a == 0 || b == 0 ) {
+uint64_t umulmod64( uint64_t a, uint64_t b, const uint64_t mod ) {
+	uint64_t hi, rem = 0;
+	if ( mod == 0 ) {
+		throw std::overflow_error( "Divide by Zero." );
+	}
+
+	//
+	if ( a >= mod ) {
+		a %= mod;
+	}
+	if ( b >= mod ) {
+		b %= mod;
+	}
+
+	if ( a == 0 || b == 0 || mod == 1 ) {
 		return 0;
 	}
-	const uint64_t lo = _umul128( a, b, &hi );
-	_udiv128( hi, lo, mod, &rem );
-	return rem;
+
+	// a => b を保証する
+	if ( a < b ) {
+		uint64_t t = a;
+		a = b;
+		b = t;
+	}
+
+	uint64_t ans = 0;
+	uint64_t x = a;
+	while ( b ) {
+		if ( b & 1 ) {
+			ans = uaddmod64( ans, x, mod );
+		}
+		b >>= 1;
+		if ( b == 0 ) {
+			break;
+		}
+		x = uaddmod64( x, x, mod );
+	}
+
+	return ans;
 }
 
 /**
@@ -75,22 +106,22 @@ uint64_t powmod64( uint64_t a, uint64_t e, const uint64_t mod ) {
 		return 1;
 	}
 	uint64_t te = e % mod;
-	if ( a == mod - 1 ){
+	if ( a == mod - 1 ) {
 		return ( te & 1 ) ? mod - 1 : 1;
 	}
-	
+
 	uint64_t ans = 1;
 	uint64_t t = a;
 
 	while ( te ) {
 		if ( te & 1 ) {
-			ans = mulmod64( ans, t, mod );
+			ans = umulmod64( ans, t, mod );
 		}
 		te >>= 1;
 		if ( te == 0 ) {
 			break;
 		}
-		t = mulmod64( t, t, mod );
+		t = umulmod64( t, t, mod );
 	}
 	return ans;
 }
@@ -105,7 +136,7 @@ uint64_t extended_eucledian( uint64_t a, uint64_t b, uint64_t mod, uint64_t *ox,
 	gcd = extended_eucledian( b % a, a, mod, &x, &y );
 	// *x1 = y - ( b / a ) * x;
 	uint64_t q = b / a;
-	q = mulmod64( q, x, mod );
+	q = umulmod64( q, x, mod );
 	*ox = usubmod64( y, q, mod );
 
 	*oy = x;
@@ -125,7 +156,7 @@ uint64_t umodinv64( uint64_t a, uint64_t mod ) {
 	}
 	uint64_t gcd = extended_eucledian( a, mod, mod, &x, &y );
 	if ( gcd != 1 ) {
-		throw "Inverse doesn't exits\n";
+		throw std::overflow_error( "The inverse does not exist." );
 	} else {
 		y = x % mod;
 	}
@@ -133,13 +164,15 @@ uint64_t umodinv64( uint64_t a, uint64_t mod ) {
 }
 
 /**
- * divmod64( const uint64_t a, const uint64_t b, const uint64_t mod )
+ * udivmod64( const uint64_t a, const uint64_t b, const uint64_t mod )
  *  @param a Dividend
  *  @param b divisor
  *  @param mod modular
  *  @return a / b mod
  */
-uint64_t divmod64( const uint64_t a, const uint64_t b, const uint64_t mod ) {
-	uint64_t ans = mulmod64( a, umodinv64( b, mod ), mod );
-	return ans;
+uint64_t udivmod64( const uint64_t a, const uint64_t b, const uint64_t mod ) {
+	if ( b == 0 ) {
+		throw std::overflow_error( "Divide by Zero." );
+	}
+	return umulmod64( a, umodinv64( b, mod ), mod );
 }
