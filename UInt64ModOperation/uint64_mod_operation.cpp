@@ -131,26 +131,25 @@ uint64_t powmod64( uint64_t a, uint64_t e, const uint64_t mod ) {
 	if ( a == 1 ) {
 		return 1;
 	}
-	uint64_t te = e;
-	if ( te >= mod ) {
-		te = te % mod;
+	if ( e >= mod ) {
+		e = e % mod;
 	}
-	if ( te == 0 ) {
+	if ( e == 0 ) {
 		return 1;
 	}
 	if ( a == mod - 1 ) {  // a ≡ -1 % mod
-		return ( te & 1 ) ? mod - 1 : 1;
+		return ( e & 1 ) ? mod - 1 : 1;  // Returns -1 if the exponent is odd and 1 if it is even.
 	}
 
 	uint64_t ans = 1;
 	uint64_t t = a;
 
-	while ( te ) {
-		if ( te & 1 ) {
+	while ( e ) {
+		if ( e & 1 ) {
 			ans = umulmod64( ans, t, mod );
 		}
-		te >>= 1;
-		if ( te == 0 ) {
+		e >>= 1;
+		if ( e == 0 ) {
 			break;
 		}
 		t = umulmod64( t, t, mod );
