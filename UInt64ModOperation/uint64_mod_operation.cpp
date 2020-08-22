@@ -208,3 +208,81 @@ uint64_t udivmod64( const uint64_t a, const uint64_t b, const uint64_t mod ) {
 	}
 	return umulmod64( a, umodinv64( b, mod ), mod );
 }
+
+/**
+ *	is_prime( uint64_t x )
+ *
+ */
+const static std::map<uint64_t, uint64_t> prime_and_max = std::map<uint64_t, uint64_t>{
+    { 2, 8321 },  //	2047. Strong pseudoprimes to base 2, [ 2047( = 23x89 ),
+                  // 3277( = 29x113 ), 4033( = 37x109 ), 4681( = 31x151 ), 8321(
+                  //= 53x157 )
+    { 3, 1373653 },
+    { 5, 25326001 },
+    { 7, 3215031751 },
+    { 11, 2152302898747 },
+    { 13, 3474749660383 },
+    { 17, 341550071728321 },
+    { 19, 341550071728321 },
+    { 23, 3825123056546413051 },
+    { 29, 3825123056546413051 },
+    { 31, 3825123056546413051 },
+    { 37, 0xFFFF'FFFF'FFFF'FFFF },
+    { 41, 0xFFFF'FFFF'FFFF'FFFF },
+    // { 37, 318665857834031151167461 },
+    // { 41, 3317044064679887385961981 },
+};
+
+bool is_prime( uint64_t target ) {
+	if ( target < 2 ) {
+		return false;
+	}
+	if ( target < 4 ) {
+		return true;
+	}
+	if ( ( target & 1 ) == 0 ) {
+		return false;
+	}
+
+	for ( const auto &[ p, m ] : prime_and_max ) {
+		if ( target == p ) {
+			return true;
+		}
+		if ( target % p == 0 ) {
+			return false;
+		}
+	}
+
+	uint64_t p_1 = target - 1;
+	uint64_t d = p_1;
+
+	while ( ( d & 1 ) == 0 ) {
+		d >>= 1;
+	}
+
+	for ( const auto &[ p, m ] : prime_and_max ) {
+		uint64_t x = powmod64( p, d, target );
+		if ( x == 1 ) {
+			if ( target < m ) {
+				return true;
+			}
+			continue;
+		}
+
+		uint64_t td = d;
+		while ( td != p_1 && x != p_1 ) {
+			x = powmod64( x, 2, target );
+			td <<= 1;
+		}
+
+		if ( td == p_1 ) {
+			return false;
+		} else {
+			if ( x == p_1 && target < m ) {
+				return true;
+			}
+		}
+	}
+
+	return true;
+}
