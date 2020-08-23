@@ -163,8 +163,12 @@ uint64_t extended_eucledian( uint64_t a, uint64_t b, uint64_t mod, uint64_t *ox,
 		*oy = 1;
 		return b;
 	}
-	uint64_t gcd, x, y;
-	gcd = extended_eucledian( b % a, a, mod, &x, &y );
+	uint64_t x, y;
+	uint64_t t = b;
+	if ( b >= a ){
+		t = b % a;
+	}
+	uint64_t gcd = extended_eucledian( t, a, mod, &x, &y );
 	// *x1 = y - ( b / a ) * x;
 	uint64_t q = b / a;
 	q = umulmod64( q, x, mod );
