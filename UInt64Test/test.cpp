@@ -159,14 +159,78 @@ TEST( TestCaseName, is_prime ) {
 	EXPECT_FALSE( is_prime( 199ULL - 1ULL ) );
 	EXPECT_FALSE( is_prime( 997ULL * 1009ULL ) );
 	EXPECT_FALSE( is_prime( 65479ULL * 65497ULL ) );
-	EXPECT_FALSE( is_prime( 18446744073709551557ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551533ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551521ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551437ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551427ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551359ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551337ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551293ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551263ULL+2 ) );
-	EXPECT_FALSE( is_prime( 18446744073709551253ULL+2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551557ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551533ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551521ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551437ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551427ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551359ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551337ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551293ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551263ULL + 2 ) );
+	EXPECT_FALSE( is_prime( 18446744073709551253ULL + 2 ) );
+}
+
+TEST( TestCaseName, isqrt ) {
+	EXPECT_EQ( 0xFFFFFFFF, isqrt( 0xFFFFFFFFFFFFFFFF ) );
+	EXPECT_EQ( 0, isqrt( 0 ) );
+	EXPECT_EQ( 1, isqrt( 1 ) );
+	EXPECT_EQ( 1, isqrt( 2 ) );
+	EXPECT_EQ( 1, isqrt( 3 ) );
+	EXPECT_EQ( 2, isqrt( 4 ) );
+
+	for ( uint64_t i = 5; i < 1000; i++ ) {
+		EXPECT_EQ( i, isqrt( i * i ) );
+		EXPECT_EQ( i, isqrt( i * i + 1 ) );
+		EXPECT_EQ( i, isqrt( i * i + 1 ) );
+	}
+	for ( uint64_t i = 9000; i < 10000; i++ ) {
+		EXPECT_EQ( i, isqrt( i * i ) );
+		EXPECT_EQ( i, isqrt( i * i + 1 ) );
+		EXPECT_EQ( i, isqrt( i * i + 1 ) );
+	}
+
+	for ( uint64_t i = 49000; i < 50000; i++ ) {
+		EXPECT_EQ( i, isqrt( i * i ) );
+		EXPECT_EQ( i, isqrt( i * i + 1 ) );
+		EXPECT_EQ( i, isqrt( i * i + 2 ) );
+		EXPECT_EQ( i, isqrt( i * i + 3 ) );
+	}
+
+	for ( uint64_t i = 0xFFFF; i < 0x10100; i++ ) {
+		EXPECT_EQ( i, isqrt( i * i ) );
+		EXPECT_EQ( i, isqrt( i * i + 1 ) );
+		EXPECT_EQ( i, isqrt( i * i + 2 ) );
+		EXPECT_EQ( i, isqrt( i * i + 3 ) );
+	}
+
+	for ( uint64_t i = 0xFFFFFFFF - 100; i < 0xFFFFFFFF; i++ ) {
+		EXPECT_EQ( i, isqrt( i * i ) );
+		EXPECT_EQ( i - 1, isqrt( i * i - 1 ) );
+		EXPECT_EQ( i - 1, isqrt( i * i - 2 ) );
+		EXPECT_EQ( i - 1, isqrt( i * i - 3 ) );
+	}
+
+	for ( uint64_t i = 0xFFFFFF - 100; i < 0xFFFFFF; i++ ) {
+		EXPECT_EQ( i, isqrt( i * i ) );
+	}
+	for ( uint64_t i = 0xF'FFFF'FFFF'FFFF - 1000; i < 0xF'FFFF'FFFF'FFFF; i++ ) {
+		EXPECT_EQ( (uint64_t)sqrt( (double)i ), isqrt( i ) );
+	}
+	for ( uint64_t i = 0xffffff8000001 - 500; i < 0xffffff8000001 + 500; i++ ) {
+		EXPECT_EQ( (uint64_t)sqrt( (double)i ), isqrt( i ) );
+	}
+
+	std::map<uint64_t, uint64_t> square_and_root = {
+	    { 0xFFFFFFFE00000001, 0xFFFFFFFF }, { 0xFFFFFFFE00000002, 0xFFFFFFFF }, { 0xFFFFFFFE00000003, 0xFFFFFFFF },
+	    { 0xFFFFFFFE00000010, 0xFFFFFFFF }, { 0xFFFFFFFC00000004, 0xFFFFFFFE }, { 0xFFFFFFFC00000014, 0xFFFFFFFE },
+	    { 0xFFFFFFFC00000024, 0xFFFFFFFE }, { 0xFFFFFFFA00000009, 0xFFFFFFFD }, { 0xFFFFFFFA00000029, 0xFFFFFFFD },
+	    { 0xFFFFFFFA00000109, 0xFFFFFFFD }, { 0xFFFFFFFA00001009, 0xFFFFFFFD }, { 0xFFFFFFF800000010, 0xFFFFFFFC },
+	    { 0xFFFFFFF800010010, 0xFFFFFFFC }, { 0xFFFFFFF810010010, 0xFFFFFFFC }, { 0xFFFFFFFA00000008, 0xFFFFFFFC },
+	    { 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFF }, { 0xFFFFFFFFFFFFFFFE, 0xFFFFFFFF }, { 0xFFFFFFFFFFFFFFFD, 0xFFFFFFFF },
+	};
+
+	for ( auto &&i : square_and_root ) {
+		EXPECT_EQ( i.second, isqrt( i.first ) );
+	}
 }

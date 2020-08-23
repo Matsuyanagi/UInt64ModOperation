@@ -137,7 +137,7 @@ uint64_t powmod64( uint64_t a, uint64_t e, const uint64_t mod ) {
 	if ( e == 0 ) {
 		return 1;
 	}
-	if ( a == mod - 1 ) {  // a ≡ -1 % mod
+	if ( a == mod - 1 ) {                // a ≡ -1 % mod
 		return ( e & 1 ) ? mod - 1 : 1;  // Returns -1 if the exponent is odd and 1 if it is even.
 	}
 
@@ -285,3 +285,36 @@ bool is_prime( uint64_t target ) {
 
 	return true;
 }
+
+/**
+ * isqrt( uint64_t x )
+ * integer sqrt
+ * Hacker's Delight
+ * @param x number
+ * @return sqrt( x ) integer
+ */
+uint64_t isqrt( uint64_t x ) {
+	if ( x <= 3 ) {
+		if ( x == 0 ) {
+			return 0;
+		}
+		return 1;
+	}
+
+	// m = 0x4000'0000'0000'0000
+	uint64_t m = ( __lzcnt64( x ) | 1ULL ) + 1ULL;
+	m = 1ULL << ( sizeof( uint64_t ) * 8 - m );
+
+	uint64_t y = 0;
+	while ( m != 0 ) {
+		const uint64_t b = y | m;
+		y = y >> 1;
+		if ( x >= b ) {
+			x -= b;
+			y |= m;
+		}
+		m = m >> 2;
+	}
+	return y;
+}
+
