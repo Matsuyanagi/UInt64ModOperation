@@ -318,3 +318,12 @@ uint64_t isqrt( uint64_t x ) {
 	return y;
 }
 
+/**
+ * is_square( x )
+ * @param x
+ * @return Returns true if x is a square number.
+ */
+bool is_square( uint64_t x ) {
+	const uint64_t root = isqrt( x );
+	return x == root * root;
+}
